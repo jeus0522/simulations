@@ -18,11 +18,12 @@ class Colors:
 
 class Actor(object):
 
-    def __init__(self, side: int):
+    def __init__(self, side: int, color: Tuple[int]):
 
+        self.color = color
         self.surface = pygame.Surface((side, side))
         self.surface.fill(Colors.WHITE)
-        pygame.draw.circle(self.surface, Colors.BLUE_JEANS, (side / 2, side / 2), side / 2)
+        pygame.draw.circle(self.surface, color, (side / 2, side / 2), side / 2)
 
     def render(self, window: pygame.Surface, position: Tuple[int, int]):
         """Render element to screen"""
@@ -49,7 +50,7 @@ class SimulationEngine(object):
 
         actors = self.env.export_actors_json()["actors"]
         for a in actors:
-            actor = Actor(side=POSITION_SIDE)
+            actor = Actor(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
             actor.render(position=(a["x"] * POSITION_SIDE, a["y"] * POSITION_SIDE), window=self.window)
 
         pygame.display.update()
@@ -69,7 +70,7 @@ class SimulationEngine(object):
                     run = False  # Ends the game loop
 
             now = time()
-            if now - last_update >= 0.33:
+            if now - last_update >= 0.2:
                 self.env.step()
                 last_update = now
 

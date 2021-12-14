@@ -19,5 +19,5 @@ class Tito:
 
     @classmethod
     def create_random(cls) -> 'Tito':
-        reaction_speed = np.random.normal(0, 1)
+        reaction_speed = np.random.uniform(0, 1)
         return Tito(reaction_speed=reaction_speed)
