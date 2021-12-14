@@ -3,8 +3,8 @@ from random import randrange, choice
 
 from dataclasses import dataclass
 
-from actors import Tito
-from utils import Constants
+from simulations.actors import Tito
+from simulations.utils import Constants
 
 
 @dataclass
@@ -70,8 +70,8 @@ class Environment:
 
     def __init__(self):
 
-        self.width = 3
-        self.height = 3
+        self.width = 10
+        self.height = 10
         self.actors: Dict[EnvironmentPosition, EnvironmentActor] = {}
 
     def calculate_actor_move(self, position: EnvironmentPosition, action_name: str):
@@ -129,9 +129,8 @@ class Environment:
             moving_actors_list.append(MovingActor(actor=actor, last_position=position, action=action))
         return moving_actors_list
 
-    def step(self):
-
-        actor_moves = self.generate_actor_moves()
+    def apply_actor_moves(self, actor_moves: List[MovingActor]) -> Dict[EnvironmentPosition, EnvironmentActor]:
+        """Generates a new dictionary of positions and their actors, based on the passed moves and actors"""
 
         moving_actors: Dict[EnvironmentPosition, MovingActor] = {}
         final_positions: Dict[EnvironmentPosition, EnvironmentActor] = {}
@@ -161,7 +160,21 @@ class Environment:
         for next_position, moving_actor in moving_actors.items():
             final_positions.update({next_position: moving_actor.actor})
 
-        self.actors = final_positions
+        return final_positions
+
+    def step(self):
+        actor_moves = self.generate_actor_moves()
+        self.actors = self.apply_actor_moves(actor_moves)
+
+    def export_actors_json(self) -> Dict:
+        actors_states: List[Dict] = []
+        for position, environment_actor in self.actors.items():
+            actor_state = {"x": position.x,
+                           "y": position.y,
+                           "reaction_speed": environment_actor.actor.reaction_speed}
+            actors_states.append(actor_state)
+
+        return {"actors": actors_states}
 
 
 def main():
