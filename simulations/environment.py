@@ -68,10 +68,10 @@ class MovingActor:
 
 class Environment:
 
-    def __init__(self):
+    def __init__(self, width: int, height: int):
 
-        self.width = 10
-        self.height = 10
+        self.width = width
+        self.height = height
         self.actors: Dict[EnvironmentPosition, EnvironmentActor] = {}
 
     def calculate_actor_move(self, position: EnvironmentPosition, action_name: str):
@@ -178,7 +178,7 @@ class Environment:
 
 
 def main():
-    env = Environment()
+    env = Environment(10, 10)
     env.populate(2)
 
     print(env.actors)

@@ -27,7 +27,7 @@ def api_get_simulation_frames():
 
 
 def get_simulation_frames() -> dict:
-    env = Environment()
+    env = Environment(10, 10)
     env.populate(2)
     result = {"frame_0": env.export_actors_json()}
 
