@@ -47,7 +47,7 @@ class Actor:
         self.age = 0
 
     def __repr__(self):
-        return f"{self.actor.__repr__()} : age={self.age}"
+        return f"{self.actor.__repr__()} , age={self.age}"
 
     def move(self) -> str:
         return self.random_move()

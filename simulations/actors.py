@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+
+import itertools
+
+
 import numpy as np
 
 
@@ -10,13 +14,15 @@ import numpy as np
 
 
 class Tito:
+    id_iter = itertools.count()
 
     def __init__(self, reaction_speed: float, life_expectancy: int):
+        self.id = f"Tito-{next(Tito.id_iter)}"
         self.reaction_speed = reaction_speed
         self.life_expectancy = life_expectancy
 
     def __repr__(self):
-        return f"Tito( reaction_speed = {self.reaction_speed} , life_expectancy = {self.life_expectancy})"
+        return f"( id: {self.id} , reaction_speed = {self.reaction_speed} , life_expectancy = {self.life_expectancy})"
 
     @classmethod
     def create_random(cls) -> 'Tito':

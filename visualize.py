@@ -50,7 +50,7 @@ class SimulationEngine(object):
 
         actors = self.env.export_actors_json()["actors"]
         for a in actors:
-            actor = Actor(side=POSITION_SIDE, color=(a[""], 175, a["reaction_speed"] * 255))
+            actor = Actor(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
             actor.render(position=(a["x"] * POSITION_SIDE, a["y"] * POSITION_SIDE), window=self.window)
 
         pygame.display.update()
