@@ -7,7 +7,7 @@ from simulations import Environment
 
 
 FPS = 30
-POSITION_SIDE = 10
+POSITION_SIDE = 30
 
 
 class Colors:
@@ -33,8 +33,8 @@ class Actor(object):
 class SimulationEngine(object):
 
     def __init__(self):
-        self.env = Environment(100, 50)
-        self.env.populate(100)
+        self.env = Environment(10, 10)
+        self.env.populate(20)
 
         window_size = (self.env.width * POSITION_SIDE, self.env.height * POSITION_SIDE)
         self.window = pygame.display.set_mode(window_size)
@@ -50,7 +50,7 @@ class SimulationEngine(object):
 
         actors = self.env.export_actors_json()["actors"]
         for a in actors:
-            actor = Actor(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
+            actor = Actor(side=POSITION_SIDE, color=(a[""], 175, a["reaction_speed"] * 255))
             actor.render(position=(a["x"] * POSITION_SIDE, a["y"] * POSITION_SIDE), window=self.window)
 
         pygame.display.update()
@@ -70,7 +70,7 @@ class SimulationEngine(object):
                     run = False  # Ends the game loop
 
             now = time()
-            if now - last_update >= 0.2:
+            if now - last_update >= 0.1:
                 self.env.step()
                 last_update = now
 

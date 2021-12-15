@@ -16,7 +16,7 @@ class ActorMoves(Constants):
     STAY = "stay"
 
 
-class EnvironmentPosition(object):
+class Position:
     """Stores an object position in a 2D environment, in units"""
 
     def __init__(self, x: int, y: int):
@@ -40,29 +40,36 @@ class EnvironmentPosition(object):
         return cls(*position)
 
 
-class EnvironmentActor:
+class Actor:
 
     def __init__(self, actor: Tito):
         self.actor = actor
+        self.age = 0
 
     def __repr__(self):
-        return self.actor.__repr__()
+        return f"{self.actor.__repr__()} : age={self.age}"
 
     def move(self) -> str:
         return self.random_move()
+
+    def increase_age(self):
+        self.age += 1
+
+    def has_to_die(self):
+        return self.age >= self.actor.life_expectancy
 
     @staticmethod
     def random_move() -> str:
         return choice(ActorMoves.values_as_list())
 
-    def has_priority(self, other: 'EnvironmentActor'):
+    def has_priority(self, other: 'Actor'):
         return self.actor.reaction_speed > other.actor.reaction_speed
 
 
 @dataclass
 class MovingActor:
-    last_position: EnvironmentPosition
-    actor: EnvironmentActor
+    last_position: Position
+    actor: Actor
     action: str
 
 
@@ -72,9 +79,9 @@ class Environment:
 
         self.width = width
         self.height = height
-        self.actors: Dict[EnvironmentPosition, EnvironmentActor] = {}
+        self.actors: Dict[Position, Actor] = {}
 
-    def calculate_actor_move(self, position: EnvironmentPosition, action_name: str):
+    def calculate_actor_move(self, position: Position, action_name: str):
 
         new_x = position.x
         new_y = position.y
@@ -95,20 +102,23 @@ class Environment:
         else:
             raise ValueError(f"Actor move {action_name} not recognized.")
 
-        return EnvironmentPosition(new_x, new_y)
+        return Position(new_x, new_y)
 
-    def add_actor(self, actor: EnvironmentActor, position: EnvironmentPosition):
+    def add_actor(self, actor: Actor, position: Position):
         """Adds an actor to the environment in the specified position"""
         self.actors.update({position: actor})
 
-    def is_position_available(self, position: EnvironmentPosition) -> bool:
+    def remove_actor(self, position: Position):
+        self.actors.pop(position)
+
+    def is_position_available(self, position: Position) -> bool:
         """Checks if a position is available in the environment"""
         return position not in self.actors
 
-    def generate_random_position(self) -> EnvironmentPosition:
+    def generate_random_position(self) -> Position:
         """Generates an available position in the environment"""
         while True:
-            position = EnvironmentPosition(randrange(self.width), randrange(self.height))
+            position = Position(randrange(self.width), randrange(self.height))
             if self.is_position_available(position):
                 break
 
@@ -118,7 +128,7 @@ class Environment:
         """Populates the environment with random actors in random positions"""
         for _ in range(num_actors):
             position = self.generate_random_position()
-            actor = EnvironmentActor(Tito.create_random())
+            actor = Actor(Tito.create_random())
             self.add_actor(actor=actor, position=position)
 
     def generate_actor_moves(self) -> List[MovingActor]:
@@ -129,11 +139,22 @@ class Environment:
             moving_actors_list.append(MovingActor(actor=actor, last_position=position, action=action))
         return moving_actors_list
 
-    def apply_actor_moves(self, actor_moves: List[MovingActor]) -> Dict[EnvironmentPosition, EnvironmentActor]:
+    def step_operations(self):
+        """Perform environmental updates on actors"""
+        positions_to_kill: List[Position] = []
+        for position, actor in self.actors.items():
+            actor.increase_age()
+            if actor.has_to_die():
+                positions_to_kill.append(position)
+
+        for pos in positions_to_kill:
+            self.remove_actor(pos)
+
+    def apply_actor_moves(self, actor_moves: List[MovingActor]) -> Dict[Position, Actor]:
         """Generates a new dictionary of positions and their actors, based on the passed moves and actors"""
 
-        moving_actors: Dict[EnvironmentPosition, MovingActor] = {}
-        final_positions: Dict[EnvironmentPosition, EnvironmentActor] = {}
+        moving_actors: Dict[Position, MovingActor] = {}
+        final_positions: Dict[Position, Actor] = {}
         for moving_actor in actor_moves:
 
             if moving_actor.action == ActorMoves.STAY:
@@ -163,15 +184,18 @@ class Environment:
         return final_positions
 
     def step(self):
+        self.step_operations()
         actor_moves = self.generate_actor_moves()
         self.actors = self.apply_actor_moves(actor_moves)
 
     def export_actors_json(self) -> Dict:
+        """Exports actors states as dictionaries ready to jsonify"""
         actors_states: List[Dict] = []
         for position, environment_actor in self.actors.items():
             actor_state = {"x": position.x,
                            "y": position.y,
-                           "reaction_speed": environment_actor.actor.reaction_speed}
+                           "reaction_speed": environment_actor.actor.reaction_speed,
+                           "life_expectancy": environment_actor.actor.life_expectancy}
             actors_states.append(actor_state)
 
         return {"actors": actors_states}
