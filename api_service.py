@@ -29,11 +29,11 @@ def api_get_simulation_frames():
 def get_simulation_frames() -> dict:
     env = Environment(10, 10)
     env.populate(2)
-    result = {"frame_0": env.export_actors_json()}
+    result = [env.export_actors_json()]
 
     for i in range(5):
         env.step()
-        result.update({f"frame_{i + 1}": env.export_actors_json()})
+        result.append(env.export_actors_json())
 
     return result
 
