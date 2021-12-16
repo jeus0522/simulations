@@ -1,9 +1,10 @@
 import "./App.css";
 import React, { Fragment, useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
-import { Box, Container, TextField, Slider } from "@mui/material";
+import { Stack, Container, TextField, Slider } from "@mui/material";
 
 import CssBaseline from "@mui/material/CssBaseline";
+import CircleIcon from "@mui/icons-material/Circle";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiFilledInput-root": {
@@ -179,57 +180,71 @@ function App() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container maxWidth="xl">
-        <Box sx={{ bgcolor: "#cfe8fc" }}>
-          {grid.length > 0 &&
-            grid.map((cells, index) => (
-              <div
-                key={index}
-                style={{
-                  height: 50,
-                  backgroundColor: "white",
-                  display: "flex",
-                  paddingTop: 20,
-                }}
-              >
-                {cells.map((cell, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      height: 40,
-                      width: 40,
-                      backgroundColor: "teal",
-                      marginLeft: 2,
-                      marginRight: 2,
-                    }}
-                  >
-                    {cell.length > 0 && (
-                      <div
-                        style={{
-                          borderRadius: "50%",
-                          backgroundColor: "white",
-                          height: 10,
-                          width: 10,
-                        }}
-                      ></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          <Slider
-            aria-label="Steps"
-            defaultValue={1}
-            getAriaValueText={valuetext}
-            valueLabelDisplay="auto"
-            value={typeof sliderValue === "number" ? sliderValue : 0}
-            onChange={handleSliderChange}
-            step={1}
-            marks
-            min={1}
-            max={steps.length}
-          />
-        </Box>
+      <Container maxWidth style={{ marginTop: 20, backgroundColor: "unset" }}>
+        <Stack
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          spacing={"4px"}
+        >
+          <div
+            style={{
+              borderRadius: 5,
+              overflow: "hidden",
+            }}
+          >
+            {grid.length > 0 &&
+              grid.map((cells, index) => (
+                <div
+                  key={index}
+                  style={{
+                    height: 40,
+                    display: "flex",
+                    backgroundColor: "lightslategray",
+                  }}
+                >
+                  {cells.map((cell, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        height: 40,
+                        width: 40,
+                        backgroundColor: "lightslategray",
+                        marginLeft: 2,
+                        marginRight: 2,
+                        display: "table-cell",
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      {cell.length > 0 && (
+                        <CircleIcon
+                          sx={{
+                            fontSize: 30,
+                            marginTop: "15%",
+                            color: "wheat",
+                          }}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </div>
+          <div style={{ width: "50%" }}>
+            <Slider
+              aria-label="Steps"
+              defaultValue={1}
+              getAriaValueText={valuetext}
+              valueLabelDisplay="auto"
+              value={typeof sliderValue === "number" ? sliderValue : 0}
+              onChange={handleSliderChange}
+              step={1}
+              marks
+              min={1}
+              max={steps.length - 1}
+            />
+          </div>
+        </Stack>
       </Container>
     </React.Fragment>
   );
