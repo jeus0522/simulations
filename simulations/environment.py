@@ -1,19 +1,9 @@
 from typing import Tuple, Dict, List
-from random import randrange, choice
+from random import randrange
 
 from dataclasses import dataclass
 
-from simulations.actors import Tito
-from simulations.utils import Constants
-
-
-@dataclass
-class ActorMoves(Constants):
-    MOVE_UP = "up"
-    MOVE_RIGHT = "right"
-    MOVE_DOWN = "down"
-    MOVE_LEFT = "left"
-    STAY = "stay"
+from simulations.actors import Tito, Actor, ActorMoves
 
 
 class Position:
@@ -30,7 +20,7 @@ class Position:
         return hash(self.__repr__())
 
     def __repr__(self):
-        return f"CellPosition( x = {self.x}, y = {self.y} )"
+        return f"Position( x = {self.x}, y = {self.y} )"
 
     def as_tuple(self) -> Tuple[int, int]:
         return self.x, self.y
@@ -38,32 +28,6 @@ class Position:
     @classmethod
     def from_tuple(cls, position: Tuple[int, int]):
         return cls(*position)
-
-
-class Actor:
-
-    def __init__(self, actor: Tito):
-        self.actor = actor
-        self.age = 0
-
-    def __repr__(self):
-        return f"{self.actor.__repr__()} , age={self.age}"
-
-    def move(self) -> str:
-        return self.random_move()
-
-    def increase_age(self):
-        self.age += 1
-
-    def has_to_die(self):
-        return self.age >= self.actor.life_expectancy
-
-    @staticmethod
-    def random_move() -> str:
-        return choice(ActorMoves.values_as_list())
-
-    def has_priority(self, other: 'Actor'):
-        return self.actor.reaction_speed > other.actor.reaction_speed
 
 
 @dataclass

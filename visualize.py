@@ -7,7 +7,7 @@ from simulations import Environment
 
 
 FPS = 30
-POSITION_SIDE = 30
+POSITION_SIDE = 10
 
 
 class Colors:
@@ -33,8 +33,8 @@ class Actor(object):
 class SimulationEngine(object):
 
     def __init__(self):
-        self.env = Environment(10, 10)
-        self.env.populate(20)
+        self.env = Environment(100, 50)
+        self.env.populate(200)
 
         window_size = (self.env.width * POSITION_SIDE, self.env.height * POSITION_SIDE)
         self.window = pygame.display.set_mode(window_size)
