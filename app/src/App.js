@@ -1,10 +1,16 @@
-import "./App.css";
 import React, { Fragment, useState, useEffect } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { styled } from "@mui/material/styles";
-import { Stack, Container, TextField, Slider } from "@mui/material";
+import { Stack, Container, TextField, Slider, IconButton } from "@mui/material";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import CircleIcon from "@mui/icons-material/Circle";
+import PauseRoundedIcon from "@mui/icons-material/PauseRounded";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+
+import { getSimulationFrames } from "./actions/simulationActions";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiFilledInput-root": {
@@ -15,147 +21,68 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-function deepEqual(object1, object2) {
-  const keys1 = Object.keys(object1);
-  const keys2 = Object.keys(object2);
-
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-
-  for (const key of keys1) {
-    const val1 = object1[key];
-    const val2 = object2[key];
-    const areObjects = isObject(val1) && isObject(val2);
-    if (
-      (areObjects && !deepEqual(val1, val2)) ||
-      (!areObjects && val1 !== val2)
-    ) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function isObject(object) {
-  return object != null && typeof object === "object";
-}
-
-function App() {
-  const steps = [
-    {
-      actors: [
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 7,
-          y: 6,
-        },
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 7,
-        },
-      ],
-    },
-    {
-      actors: [
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 7,
-          y: 7,
-        },
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 8,
-        },
-      ],
-    },
-    {
-      actors: [
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 7,
-          y: 7,
-        },
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 8,
-        },
-      ],
-    },
-    {
-      actors: [
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 8,
-        },
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 6,
-          y: 7,
-        },
-      ],
-    },
-    {
-      actors: [
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 8,
-        },
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 7,
-          y: 7,
-        },
-      ],
-    },
-    {
-      actors: [
-        {
-          reaction_speed: -0.21113376937868522,
-          x: 9,
-          y: 8,
-        },
-        {
-          reaction_speed: -1.6804522056140185,
-          x: 6,
-          y: 7,
-        },
-      ],
-    },
-  ];
-
+function App(props) {
+  const { actions } = props;
   const [opts, setOpts] = useState({
-    pixelsWide: 10,
-    pixelsHigh: 10,
+    pixelsWide: 100,
+    pixelsHigh: 100,
     pixelWidth: 10,
     pixelHeight: 10,
     verticalSymmetry: true,
     outputType: "svg",
+    msPerFrame: 500,
   });
   const [grid, setGrid] = useState([]);
 
   const [sliderValue, setSliderValue] = React.useState(1);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [steps, setSteps] = React.useState([]);
+
+  useEffect(() => {
+    if (props.steps.length !== 0) {
+      setSteps(props.steps);
+    }
+  }, [props.steps]);
+
+  useEffect(() => {
+    let interval = null;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        if (sliderValue === steps.length) {
+          setIsPlaying(false);
+          clearInterval(interval);
+        } else {
+          setSliderValue((sliderValue) => sliderValue + 1);
+          updateGrid(sliderValue);
+        }
+      }, opts.msPerFrame);
+    } else if (!isPlaying && sliderValue !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, sliderValue]);
+
+  const fetchSteps = () => {
+    async function fetchData() {
+      await actions.getSimulationFrames();
+    }
+    fetchData();
+  };
+
+  const drawSteps = () => {
+    generateShit();
+  };
 
   const handleSliderChange = (event, newValue) => {
     setSliderValue(newValue);
-    updateGrid();
+    updateGrid(newValue);
   };
 
-  useEffect(() => {
-    generateShit();
-  }, []);
-
-  const updateGrid = () => {
+  const updateGrid = (step) => {
     let updatedGrid = [...Array(opts.pixelsWide)].map((e) =>
       Array(opts.pixelsHigh).fill([])
     );
-    const actors = steps[sliderValue].actors;
+    const actors = steps[step].actors;
     actors.map((actor) => {
       updatedGrid[actor.x][actor.y] = [{ actor }];
     });
@@ -168,86 +95,154 @@ function App() {
       Array(opts.pixelsHigh).fill([])
     );
     setGrid(grid);
-    updateGrid();
+    updateGrid(1);
   };
 
   const valuetext = (value) => {
     return `Step ${value}`;
   };
 
-  console.log(grid);
+  const handlePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setSliderValue(1);
+    updateGrid(1);
+  };
 
   return (
     <React.Fragment>
-      <CssBaseline />
-      <Container maxWidth style={{ marginTop: 20, backgroundColor: "unset" }}>
-        <Stack
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={"4px"}
-        >
-          <div
-            style={{
-              borderRadius: 5,
-              overflow: "hidden",
-            }}
+      {steps.length !== 0 ? (
+        <Container maxWidth style={{ backgroundColor: "darkkhaki" }}>
+          <Stack
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={"4px"}
+            sx={{ marginTop: "20px" }}
           >
-            {grid.length > 0 &&
-              grid.map((cells, index) => (
-                <div
-                  key={index}
-                  style={{
-                    height: 40,
-                    display: "flex",
-                    backgroundColor: "lightslategray",
-                  }}
-                >
-                  {cells.map((cell, index) => (
+            <div
+              style={{
+                border: "2px solid lightslategray",
+                overflow: "hidden",
+                padding: 3,
+                borderRadius: 5,
+                marginTop: 10,
+              }}
+            >
+              <div
+                style={{
+                  borderRadius: 5,
+                  overflow: "hidden",
+                }}
+              >
+                {grid.length > 0 &&
+                  grid.map((cells, index) => (
                     <div
                       key={index}
                       style={{
-                        height: 40,
-                        width: 40,
+                        height: 10,
+                        display: "flex",
                         backgroundColor: "lightslategray",
-                        marginLeft: 2,
-                        marginRight: 2,
-                        display: "table-cell",
-                        verticalAlign: "middle",
                       }}
                     >
-                      {cell.length > 0 && (
-                        <CircleIcon
-                          sx={{
-                            fontSize: 30,
-                            marginTop: "15%",
-                            color: "wheat",
+                      {cells.map((cell, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            height: 10,
+                            width: 10,
+                            backgroundColor: "lightslategray",
+                            marginLeft: 2,
+                            marginRight: 2,
+                            display: "table-cell",
+                            verticalAlign: "middle",
                           }}
-                        />
-                      )}
+                        >
+                          {cell.length > 0 && (
+                            <CircleIcon
+                              sx={{
+                                fontSize: "5px",
+                                color: "wheat",
+                                position: "absolute",
+                                marginTop: "5px",
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
                     </div>
                   ))}
-                </div>
-              ))}
-          </div>
-          <div style={{ width: "50%" }}>
-            <Slider
-              aria-label="Steps"
-              defaultValue={1}
-              getAriaValueText={valuetext}
-              valueLabelDisplay="auto"
-              value={typeof sliderValue === "number" ? sliderValue : 0}
-              onChange={handleSliderChange}
-              step={1}
-              marks
-              min={1}
-              max={steps.length - 1}
-            />
-          </div>
-        </Stack>
-      </Container>
+              </div>
+            </div>
+            <div style={{ width: "40%" }}>
+              <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={"4px"}
+                sx={{
+                  marginTop: "20px",
+                  backgroundColor: "#e0e0e0",
+                  borderRadius: "5px",
+                  margin: "10px 0 10px 0",
+                  padding: 4,
+                }}
+              >
+                <Slider
+                  aria-label="Steps"
+                  defaultValue={1}
+                  getAriaValueText={valuetext}
+                  valueLabelDisplay="auto"
+                  value={typeof sliderValue === "number" ? sliderValue : 0}
+                  onChange={handleSliderChange}
+                  step={1}
+                  marks
+                  min={1}
+                  max={steps.length}
+                />
+                <Stack direction="row" spacing={1}>
+                  <IconButton
+                    aria-label="Play / Pause"
+                    onClick={() => handlePlay()}
+                  >
+                    {isPlaying ? (
+                      <PauseRoundedIcon sx={{ fontSize: 40 }} />
+                    ) : (
+                      <PlayArrowRoundedIcon sx={{ fontSize: 40 }} />
+                    )}
+                  </IconButton>
+                  <IconButton aria-label="Reset" onClick={() => handleReset()}>
+                    <RestartAltRoundedIcon sx={{ fontSize: 40 }} />
+                  </IconButton>
+                </Stack>
+              </Stack>
+            </div>
+          </Stack>
+        </Container>
+      ) : null}
+      <button onClick={() => fetchSteps()}>fetch</button>
+      <button onClick={() => drawSteps()}>draw</button>
     </React.Fragment>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  steps: state.simulation.steps,
+  isStepsLoading: state.simulation.isStepsLoading,
+});
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(
+      {
+        getSimulationFrames,
+      },
+      dispatch
+    ),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
