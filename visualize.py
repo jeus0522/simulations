@@ -3,7 +3,7 @@ from typing import Tuple
 
 import pygame
 
-from simulations import Environment
+from simulations import SimulationEngine
 
 
 FPS = 30
@@ -16,7 +16,7 @@ class Colors:
     BLUE_JEANS = (67, 175, 252)
 
 
-class Actor(object):
+class Entity(object):
 
     def __init__(self, side: int, color: Tuple[int]):
 
@@ -30,13 +30,13 @@ class Actor(object):
         window.blit(self.surface, position)
 
 
-class SimulationEngine(object):
+class SimulationVisualization(object):
 
     def __init__(self):
-        self.env = Environment(100, 50)
-        self.env.populate(200)
+        self.engine = SimulationEngine()
+        self.engine.initialize_simulation()
 
-        window_size = (self.env.width * POSITION_SIDE, self.env.height * POSITION_SIDE)
+        window_size = (self.engine.env.width * POSITION_SIDE, self.engine.env.height * POSITION_SIDE)
         self.window = pygame.display.set_mode(window_size)
         pygame.display.set_caption("Simulation")
 
@@ -47,11 +47,16 @@ class SimulationEngine(object):
 
     def render(self):
         self.window.blit(self.background, (0, 0))
-
-        actors = self.env.export_actors_json()["actors"]
+        data = self.engine.export_state_json()
+        actors = data["actors"]
         for a in actors:
-            actor = Actor(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
+            actor = Entity(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
             actor.render(position=(a["x"] * POSITION_SIDE, a["y"] * POSITION_SIDE), window=self.window)
+
+        foods = data["food"]
+        for f in foods:
+            food = Entity(side=POSITION_SIDE, color=Colors.RED)
+            food.render(position=(f["x"] * POSITION_SIDE, f["y"] * POSITION_SIDE), window=self.window)
 
         pygame.display.update()
 
@@ -71,7 +76,7 @@ class SimulationEngine(object):
 
             now = time()
             if now - last_update >= 0.1:
-                self.env.step()
+                self.engine.step()
                 last_update = now
 
             self.render()
@@ -79,7 +84,7 @@ class SimulationEngine(object):
 
 def main():
 
-    engine = SimulationEngine()
+    engine = SimulationVisualization()
     engine.run_simulation()
 
 
