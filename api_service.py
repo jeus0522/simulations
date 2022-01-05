@@ -1,13 +1,13 @@
 import argparse
 
 from flask import jsonify, Flask
-from flask_cors import CORS
-from simulations import Environment
-
+# from flask_cors import CORS
+from simulations import Environment, SimulationEngine
 
 # global
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+
 
 @app.errorhandler(500)
 def internal_error():
@@ -27,13 +27,13 @@ def api_get_simulation_frames():
 
 
 def get_simulation_frames() -> dict:
-    env = Environment(100, 100)
-    env.populate(100)
-    result = [env.export_actors_json()]
+    engine = SimulationEngine()
+    engine.initialize_simulation()
+    result = [engine.export_state_json()]
 
     for i in range(100):
-        env.step()
-        result.append(env.export_actors_json())
+        engine.step()
+        result.append(engine.export_state_json())
 
     return result
 
