@@ -1,6 +1,9 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 
+import Agent from "./Agent";
+import Food from "./Food";
+
 const BoardContainer = styled("div")(() => ({
   border: "2px solid lightslategray",
   overflow: "hidden",
@@ -28,33 +31,6 @@ const Cell = styled("div")(() => ({
   marginRight: 2,
 }));
 
-// const Agent = styled("div")((props) => ({
-//   margin: "0px auto",
-//   height: "60%",
-//   width: "60%",
-//   backgroundColor: `rgb(67,175,${props.reaction_speed}})`,
-//   borderRadius: "50%",
-//   marginTop: "20%",
-// }));
-
-// const Agent = (props) => {
-//   debugger;
-//   return (
-//     <div
-//       sx={{
-//         margin: "0px auto",
-//         height: "60%",
-//         width: "60%",
-//         backgroundColor: `rgb(67,175,${props.reaction_speed}})`,
-//         borderRadius: "50%",
-//         marginTop: "20%",
-//       }}
-//     >
-//       {props.children}
-//     </div>
-//   );
-// };
-
 const Board = (props) => {
   const { grid } = props;
   // debugger;
@@ -67,31 +43,9 @@ const Board = (props) => {
               {cells.map((cell, index) => (
                 <Cell key={index}>
                   {cell[0] && "actor" in cell[0] ? (
-                    <div
-                      style={{
-                        margin: "0px auto",
-                        height: "60%",
-                        width: "60%",
-                        backgroundColor: `rgb(67,125,${
-                          cell[0].actor.actor.reaction_speed * 255
-                        })`.toString(),
-                        borderRadius: "50%",
-                        marginTop: "20%",
-                      }}
-                    />
+                    <Agent agentData={cell[0].actor.actor} />
                   ) : null}
-                  {cell[0] && "food" in cell[0] ? (
-                    <div
-                      style={{
-                        margin: "0px auto",
-                        height: "60%",
-                        width: "60%",
-                        backgroundColor: "crimson",
-                        borderRadius: "50%",
-                        marginTop: "20%",
-                      }}
-                    />
-                  ) : null}
+                  {cell[0] && "food" in cell[0] ? <Food /> : null}
                 </Cell>
               ))}
             </Row>
