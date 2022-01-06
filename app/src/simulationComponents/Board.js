@@ -1,8 +1,6 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 
-import CircleIcon from "@mui/icons-material/Circle";
-
 const BoardContainer = styled("div")(() => ({
   border: "2px solid lightslategray",
   overflow: "hidden",
@@ -30,6 +28,33 @@ const Cell = styled("div")(() => ({
   marginRight: 2,
 }));
 
+// const Agent = styled("div")((props) => ({
+//   margin: "0px auto",
+//   height: "60%",
+//   width: "60%",
+//   backgroundColor: `rgb(67,175,${props.reaction_speed}})`,
+//   borderRadius: "50%",
+//   marginTop: "20%",
+// }));
+
+// const Agent = (props) => {
+//   debugger;
+//   return (
+//     <div
+//       sx={{
+//         margin: "0px auto",
+//         height: "60%",
+//         width: "60%",
+//         backgroundColor: `rgb(67,175,${props.reaction_speed}})`,
+//         borderRadius: "50%",
+//         marginTop: "20%",
+//       }}
+//     >
+//       {props.children}
+//     </div>
+//   );
+// };
+
 const Board = (props) => {
   const { grid } = props;
   // debugger;
@@ -47,7 +72,9 @@ const Board = (props) => {
                         margin: "0px auto",
                         height: "60%",
                         width: "60%",
-                        backgroundColor: "wheat",
+                        backgroundColor: `rgb(67,125,${
+                          cell[0].actor.actor.reaction_speed * 255
+                        })`.toString(),
                         borderRadius: "50%",
                         marginTop: "20%",
                       }}

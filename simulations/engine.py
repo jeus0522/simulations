@@ -12,7 +12,7 @@ class SimulationEngine:
 
     def __init__(self):
 
-        self.env = Environment(100, 50)
+        self.env = Environment(100, 100)
         self.actors: Dict[Position, Actor] = {}
         self.food: Dict[Position, Food] = {}
         self.food_respawn = 0
