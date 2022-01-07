@@ -1,12 +1,12 @@
 import argparse
 
 from flask import jsonify, Flask
-# from flask_cors import CORS
+from flask_cors import CORS
 from simulations import Environment, SimulationEngine
 
 # global
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 
 
 @app.errorhandler(500)

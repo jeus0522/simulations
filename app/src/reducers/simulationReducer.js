@@ -18,10 +18,6 @@ const simulationReducer = (state = initialState, action) => {
       };
     }
     case GET_SIMULATION_FRAMES_SUCCESS: {
-      //   let basicCaseData = action.payload.response;
-      //   const parsedCaseId = basicCaseData.source_name.split(" ");
-      //   basicCaseData.parsedCaseId = parsedCaseId[1];
-      //   basicCaseData.originalCase = true;
       return {
         ...state,
         steps: action.payload.response,
