@@ -10,3 +10,7 @@ class Constants:
         return [x[1] for x in inspect.getmembers(cls)
                 if not x[0].startswith("__")
                 and not inspect.ismethod(x[1])]
+
+
+class GameError(Exception):
+    pass

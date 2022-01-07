@@ -27,8 +27,8 @@ def api_get_simulation_frames():
 
 
 def get_simulation_frames() -> dict:
-    engine = SimulationEngine()
-    engine.initialize_simulation()
+    engine = SimulationEngine(100, 50)
+    engine.initialize_simulation(num_actors=100, num_food=80)
     result = [engine.export_state_json()]
 
     for i in range(100):

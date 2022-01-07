@@ -1,10 +1,11 @@
 import itertools
 from random import choice
+from copy import deepcopy
 
 import numpy as np
 from dataclasses import dataclass
 
-from simulations.utils import Constants
+from simulations.environment import Position, ActorMoves
 from simulations.game_entity import BaseId, GameEntity
 
 
@@ -20,33 +21,31 @@ class Tito:
         return Tito(reaction_speed, life_expectancy)
 
 
-@dataclass
-class ActorMoves(Constants):
-    MOVE_UP = "up"
-    MOVE_RIGHT = "right"
-    MOVE_DOWN = "down"
-    MOVE_LEFT = "left"
-    STAY = "stay"
-
-
 class ActorID(BaseId):
     id_iter = itertools.count()
 
     @classmethod
     def generate_id(cls):
-        idx = f"Actor-{next(ActorID.id_iter)}"
+        """Generate a new ID"""
+        idx = f"Tito-{next(ActorID.id_iter)}"
         return ActorID(idx)
 
 
 class Actor(GameEntity):
 
-    def __init__(self, actor: Tito, idx: ActorID):
+    def __init__(self, actor: Tito, idx: ActorID, family: str):
         self.actor = actor
         self.age = 0
+        self.family = family
         super().__init__(idx=idx)
 
     def __repr__(self):
-        return f"{self.actor.__repr__()} , age={self.age}"
+        return f"{self.idx} , {hex(id(self))}"
+
+    def as_json(self) -> dict:
+        actor_json = deepcopy(self.actor.__dict__)
+        actor_json.update({"age": self.age, "family": self.family, "id": self.idx.idx})
+        return actor_json
 
     def move(self) -> str:
         return self.random_move()
@@ -68,4 +67,16 @@ class Actor(GameEntity):
     def generate_random(cls) -> 'Actor':
         actor = Tito.create_random()
         idx = ActorID.generate_id()
-        return Actor(actor=actor, idx=idx)
+        return Actor(actor=actor, idx=idx, family=idx.idx)
+
+    def reproduce(self) -> 'Actor':
+        actor = deepcopy(self.actor)
+        idx = ActorID.generate_id()
+        return Actor(actor=actor, idx=idx, family=self.family)
+
+
+@dataclass
+class MovingActor:
+    last_position: Position
+    actor: Actor
+    action: str

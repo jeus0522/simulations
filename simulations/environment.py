@@ -2,7 +2,16 @@ from typing import Tuple
 
 from dataclasses import dataclass
 
-from simulations.actors import Actor, ActorMoves
+from simulations.utils import Constants
+
+
+@dataclass
+class ActorMoves(Constants):
+    MOVE_UP = "up"
+    MOVE_RIGHT = "right"
+    MOVE_DOWN = "down"
+    MOVE_LEFT = "left"
+    STAY = "stay"
 
 
 class Position:
@@ -27,13 +36,6 @@ class Position:
     @classmethod
     def from_tuple(cls, position: Tuple[int, int]):
         return cls(*position)
-
-
-@dataclass
-class MovingActor:
-    last_position: Position
-    actor: Actor
-    action: str
 
 
 class Environment:

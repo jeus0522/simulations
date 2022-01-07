@@ -1,3 +1,4 @@
-from .environment import Environment, Actor, Position
-from .actors import Tito
+from .actors import Tito, MovingActor, Actor
 from .engine import SimulationEngine
+from .environment import Environment, Position
+from .utils import GameError

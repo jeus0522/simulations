@@ -33,8 +33,8 @@ class Entity(object):
 class SimulationVisualization(object):
 
     def __init__(self):
-        self.engine = SimulationEngine()
-        self.engine.initialize_simulation()
+        self.engine = SimulationEngine(100, 50)
+        self.engine.initialize_simulation(100, 80)
 
         window_size = (self.engine.env.width * POSITION_SIDE, self.engine.env.height * POSITION_SIDE)
         self.window = pygame.display.set_mode(window_size)
@@ -48,16 +48,16 @@ class SimulationVisualization(object):
     def render(self):
         self.window.blit(self.background, (0, 0))
         data = self.engine.export_state_json()
-        actors = data["actors"]
-        for a in actors:
-            actor = Entity(side=POSITION_SIDE, color=(67, 175, a["reaction_speed"] * 255))
-            actor.render(position=(a["x"] * POSITION_SIDE, a["y"] * POSITION_SIDE), window=self.window)
 
-        foods = data["food"]
-        for f in foods:
-            food = Entity(side=POSITION_SIDE, color=Colors.RED)
-            food.render(position=(f["x"] * POSITION_SIDE, f["y"] * POSITION_SIDE), window=self.window)
+        for entity in data:
+            if entity["type"] == "Actor":
+                actor = Entity(side=POSITION_SIDE, color=(67, 175, entity["reaction_speed"] * 255))
+                actor.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE), window=self.window)
+                continue
 
+            if entity["type"] == "Food":
+                food = Entity(side=POSITION_SIDE, color=Colors.RED)
+                food.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE), window=self.window)
         pygame.display.update()
 
     def run_simulation(self):
