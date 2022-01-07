@@ -72,16 +72,17 @@ class ActorsManager:
 
 class SimulationEngine:
 
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, num_food: int):
 
         self.env = Environment(width, height)
         self.actors_manager = ActorsManager()
         self.food: Dict[Position, Food] = {}
         self.food_respawn = 0
+        self.num_food = num_food
 
-    def initialize_simulation(self, num_actors: int, num_food: int):
+    def initialize_simulation(self, num_actors: int):
         self.populate_actors(num_actors)
-        self.populate_food(num_food)
+        self.populate_food()
 
     def add_food(self, food: Food, position: Position):
         """Adds an food to the environment in the specified position"""
@@ -110,9 +111,9 @@ class SimulationEngine:
             actor = Actor.generate_random()
             self.actors_manager.add_actor(actor=actor, position=position)
 
-    def populate_food(self, num_food: int):
+    def populate_food(self):
         """Populates the environment with food in random positions"""
-        for _ in range(num_food):
+        for _ in range(self.num_food):
             position = self.generate_random_position()
             food = Food()
             self.add_food(food=food, position=position)
@@ -130,7 +131,7 @@ class SimulationEngine:
 
         self.food_respawn += 1
         if not self.food_respawn % 100:
-            self.populate_food(80)
+            self.populate_food()
 
     def step(self):
         self.step_operations()
@@ -163,8 +164,8 @@ class SimulationEngine:
 
 
 def main():
-    sim = SimulationEngine(3, 3)
-    sim.initialize_simulation(num_actors=2, num_food=2)
+    sim = SimulationEngine(3, 3, num_food=2)
+    sim.initialize_simulation(num_actors=2)
 
     for _ in range(200):
         sim.step()

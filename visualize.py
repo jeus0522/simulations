@@ -33,8 +33,8 @@ class Entity(object):
 class SimulationVisualization(object):
 
     def __init__(self):
-        self.engine = SimulationEngine(100, 50)
-        self.engine.initialize_simulation(100, 80)
+        self.engine = SimulationEngine(100, 100, 160)
+        self.engine.initialize_simulation(200)
 
         window_size = (self.engine.env.width * POSITION_SIDE, self.engine.env.height * POSITION_SIDE)
         self.window = pygame.display.set_mode(window_size)
@@ -86,6 +86,7 @@ def main():
 
     engine = SimulationVisualization()
     engine.run_simulation()
+    pygame.quit()
 
 
 if __name__ == '__main__':
