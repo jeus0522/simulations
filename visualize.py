@@ -75,7 +75,7 @@ class SimulationVisualization(object):
                     run = False  # Ends the game loop
 
             now = time()
-            if now - last_update >= 0.1:
+            if now - last_update >= 0.05:
                 self.engine.step()
                 last_update = now
 

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from simulations.environment import Position, ActorMoves
 from simulations.game_entity import BaseId, GameEntity
+from simulations.actors.brain import Brain
 
 
 @dataclass
@@ -33,10 +34,11 @@ class ActorID(BaseId):
 
 class Actor(GameEntity):
 
-    def __init__(self, actor: Tito, idx: ActorID, family: str):
+    def __init__(self, actor: Tito, idx: ActorID, family: str, brain: Brain):
         self.actor = actor
         self.age = 0
         self.family = family
+        self.brain = brain
         super().__init__(idx=idx)
 
     def __repr__(self):
@@ -58,21 +60,17 @@ class Actor(GameEntity):
 
     @staticmethod
     def random_move() -> str:
-        return choice(ActorMoves.values_as_list())
+        actions = [action.name for action in ActorMoves]
+        return choice(actions)
 
     def has_priority(self, other: 'Actor'):
         return self.actor.reaction_speed > other.actor.reaction_speed
 
-    @classmethod
-    def generate_random(cls) -> 'Actor':
-        actor = Tito.create_random()
-        idx = ActorID.generate_id()
-        return Actor(actor=actor, idx=idx, family=idx.idx)
-
     def reproduce(self) -> 'Actor':
         actor = deepcopy(self.actor)
         idx = ActorID.generate_id()
-        return Actor(actor=actor, idx=idx, family=self.family)
+        brain = deepcopy(self.brain)
+        return Actor(actor=actor, idx=idx, family=self.family, brain=brain)
 
 
 @dataclass

@@ -1,15 +1,18 @@
 from random import randrange
 from typing import Dict, List
 
-from simulations.actors import ActorMoves, Actor
-from simulations.actors import MovingActor
-from simulations.environment import Environment, Position
+from simulations.actors import Actor, MovingActor, Tito
+from simulations.actors.actors import ActorID
+from simulations.environment import Environment, Position, ActorMoves, ActorSensors
 from simulations.food import Food
+from simulations.actors.brain import BrainGenerator
 
 
 class ActorsManager:
 
     def __init__(self):
+        self.brain_generator = BrainGenerator(sensors=ActorSensors, actions=ActorMoves, num_genes=3,
+                                              hex_bits=2, weight_limits=5)
         self.actors: Dict[Position, Actor] = {}
 
     def add_actor(self, actor: Actor, position: Position):
@@ -44,7 +47,7 @@ class ActorsManager:
         for moving_actor in actor_moves:
 
             # The actor chose to stay
-            if moving_actor.action == ActorMoves.STAY:
+            if moving_actor.action == ActorMoves.STAY.name:
                 continue
 
             next_position = env.calculate_actor_move(moving_actor.last_position, moving_actor.action)
@@ -68,6 +71,12 @@ class ActorsManager:
     def move_actor(self, position: Position, moving_actor: MovingActor):
         self.add_actor(moving_actor.actor, position)
         self.remove_actor(moving_actor.last_position)
+
+    def generate_random_actor(self) -> Actor:
+        actor = Tito.create_random()
+        idx = ActorID.generate_id()
+        brain = self.brain_generator.generate_brain()
+        return Actor(actor=actor, idx=idx, family=idx.idx, brain=brain)
 
 
 class SimulationEngine:
@@ -108,7 +117,7 @@ class SimulationEngine:
         """Populates the environment with random actors in random positions"""
         for _ in range(num_actors):
             position = self.generate_random_position()
-            actor = Actor.generate_random()
+            actor = self.actors_manager.generate_random_actor()
             self.actors_manager.add_actor(actor=actor, position=position)
 
     def populate_food(self):

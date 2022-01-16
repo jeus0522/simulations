@@ -1,4 +1,5 @@
 from typing import Tuple
+from enum import Enum
 
 from dataclasses import dataclass
 
@@ -6,12 +7,27 @@ from simulations.utils import Constants
 
 
 @dataclass
-class ActorMoves(Constants):
-    MOVE_UP = "up"
-    MOVE_RIGHT = "right"
-    MOVE_DOWN = "down"
-    MOVE_LEFT = "left"
-    STAY = "stay"
+class ActorMoves(Enum):
+    MOVE_UP = 0
+    MOVE_RIGHT = 1
+    MOVE_DOWN = 2
+    MOVE_LEFT = 3
+    STAY = 4
+
+
+class ActorSensors(Enum):
+    ACTOR_UP = 0
+    ACTOR_RIGHT = 1
+    ACTOR_DOWN = 2
+    ACTOR_LEFT = 3
+    FOOD_UP = 4
+    FOOD_RIGHT = 5
+    FOOD_DOWN = 6
+    FOOD_LEFT = 7
+    WALL_UP = 8
+    WALL_RIGHT = 9
+    WALL_DOWN = 10
+    WALL_LEFT = 11
 
 
 class Position:
@@ -49,19 +65,19 @@ class Environment:
 
         new_x = position.x
         new_y = position.y
-        if action_name == ActorMoves.MOVE_UP:
+        if action_name == ActorMoves.MOVE_UP.name:
             if position.y < self.height - 1:
                 new_y += 1
-        elif action_name == ActorMoves.MOVE_DOWN:
+        elif action_name == ActorMoves.MOVE_DOWN.name:
             if position.y > 0:
                 new_y -= 1
-        elif action_name == ActorMoves.MOVE_RIGHT:
+        elif action_name == ActorMoves.MOVE_RIGHT.name:
             if position.x < self.width - 1:
                 new_x += 1
-        elif action_name == ActorMoves.MOVE_LEFT:
+        elif action_name == ActorMoves.MOVE_LEFT.name:
             if position.x > 0:
                 new_x -= 1
-        elif action_name == ActorMoves.STAY:
+        elif action_name == ActorMoves.STAY.name:
             pass
         else:
             raise ValueError(f"Actor move {action_name} not recognized.")
