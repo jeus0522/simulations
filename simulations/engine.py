@@ -1,4 +1,3 @@
-from random import randrange
 from typing import Dict, List
 
 import numpy as np
@@ -191,6 +190,7 @@ class SimulationEngine:
         for position, actor in self.actors_manager.items():
             actor_state = {"x": position.x,
                            "y": position.y,
+                           "first_gen": actor.brain.genome[0].as_str(),
                            "type": "Actor"}
             actor_state.update(actor.as_json())
             entities.append(actor_state)

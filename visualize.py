@@ -51,7 +51,8 @@ class SimulationVisualization(object):
 
         for entity in data:
             if entity["type"] == "Actor":
-                actor = Entity(side=POSITION_SIDE, color=(67, 175, entity["reaction_speed"] * 255))
+                color = pygame.Color(f"#{entity['first_gen']}")
+                actor = Entity(side=POSITION_SIDE, color=color)
                 actor.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE), window=self.window)
                 continue
 
