@@ -49,8 +49,18 @@ class Actor(GameEntity):
         actor_json.update({"age": self.age, "family": self.family, "id": self.idx.idx})
         return actor_json
 
-    def move(self) -> str:
-        return self.random_move()
+    def move(self, state_vector: np.array) -> str:
+
+        actions_vector = np.matmul(state_vector, self.brain.weights)
+
+        # All actions are 0
+        if not np.any(actions_vector):
+            random_action = np.random.randint(0, len(ActorMoves))
+            return ActorMoves(random_action).name
+
+        max_action_id = np.argmax(actions_vector)
+
+        return ActorMoves(max_action_id).name
 
     def increase_age(self):
         self.age += 1

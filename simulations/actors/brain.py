@@ -49,7 +49,7 @@ class BrainGenerator:
         self.hex_bits = hex_bits
         self.weight_limits = weight_limits
 
-    def decode_gen(self, gen: BrainGen):
+    def decode_gen(self, gen: BrainGen) -> (int, int, float):
         sensor = int(gen.sensor, 16) % len(self.sensors)
         action = int(gen.action, 16) % len(self.actions)
         binary_weight_gen = Hexadecimal.chain_as_binary(gen.weight)

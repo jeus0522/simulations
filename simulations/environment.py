@@ -1,3 +1,4 @@
+from random import randrange
 from typing import Tuple
 from enum import Enum
 
@@ -30,6 +31,13 @@ class ActorSensors(Enum):
     WALL_LEFT = 11
 
 
+class Directions(Enum):
+    UP = (0, -1)
+    RIGHT = (1, 0)
+    DOWN = (0, 1)
+    LEFT = (-1, 0)
+
+
 class Position:
     """Stores an object position in a 2D environment, in units"""
 
@@ -53,6 +61,9 @@ class Position:
     def from_tuple(cls, position: Tuple[int, int]):
         return cls(*position)
 
+    def add_tuple(self, values: Tuple[int, int]) -> 'Position':
+        return Position(self.x + values[0], self.y + values[1])
+
 
 class Environment:
 
@@ -60,6 +71,12 @@ class Environment:
 
         self.width = width
         self.height = height
+
+    def is_inside(self, position: Position):
+        return 0 <= position.x <= self.width - 1 and 0 <= position.y <= self.height
+
+    def generate_random_position(self) -> Position:
+        return Position(randrange(self.width), randrange(self.height))
 
     def calculate_actor_move(self, position: Position, action_name: str):
 
