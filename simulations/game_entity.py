@@ -1,27 +1,19 @@
-from abc import ABC, abstractmethod
+from itertools import count
 
 
-class BaseId(ABC):
+class BaseIDGenerator:
+    """Generate unique IDs for entities"""
 
-    def __init__(self, idx: str):
-        self.idx = idx
-
-    def __eq__(self, other):
-        return self.idx == other.idx
-
-    def __hash__(self):
-        return hash(self.__repr__())
-
-    def __repr__(self):
-        return self.idx
+    prefix: str
+    id_iter: count
 
     @classmethod
-    @abstractmethod
-    def generate_id(cls):
+    def generate_id(cls) -> str:
         """Generate a new ID"""
+        return f"{cls.prefix}-{next(cls.id_iter):05d}"
 
 
 class GameEntity:
 
-    def __init__(self, idx: BaseId):
+    def __init__(self, idx: str):
         self.idx = idx

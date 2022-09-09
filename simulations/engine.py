@@ -3,7 +3,7 @@ from typing import Dict, List
 import numpy as np
 
 from simulations.actors import Actor, MovingActor, Tito
-from simulations.actors.actors import ActorID
+from simulations.actors.actors import ActorID, TitoGenerator
 from simulations.environment import Environment, Position, ActorMoves, ActorSensors, Directions
 from simulations.food import Food
 from simulations.actors.brain import BrainGenerator
@@ -37,10 +37,10 @@ class ActorsManager:
         self.remove_actor(moving_actor.last_position)
 
     def generate_random_actor(self) -> Actor:
-        actor = Tito.create_random()
+        actor = TitoGenerator.create_random()
         idx = ActorID.generate_id()
         brain = self.brain_generator.generate_brain()
-        return Actor(actor=actor, idx=idx, family=idx.idx, brain=brain)
+        return Actor(actor=actor, idx=idx, family=idx, brain=brain)
 
 
 class SimulationEngine:
@@ -64,17 +64,17 @@ class SimulationEngine:
         if not self.env.is_inside(position):
             return "WALL"
 
-        return None
+        return "None"
 
     def get_position_states(self, position: Position) -> np.array:
 
         state_vector = np.zeros(len(ActorSensors))
 
-        for dir_idx, direction in enumerate(Directions):
+        for direction in Directions:
             sensed_position = position.add_tuple(direction.value)
             sensed_entity = self.get_cell_state(sensed_position)
 
-            if sensed_entity is None:
+            if sensed_entity == "None":
                 continue
 
             state_vector_id = ActorSensors[f"{sensed_entity}_{direction.name}"].value

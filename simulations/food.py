@@ -1,15 +1,12 @@
 import itertools
 
-from simulations.game_entity import GameEntity, BaseId
+from simulations.game_entity import GameEntity, BaseIDGenerator
 
 
-class FoodID(BaseId):
+class FoodID(BaseIDGenerator):
+    """Generates unique IDs for foods"""
+    prefix = "Food"
     id_iter = itertools.count()
-
-    @classmethod
-    def generate_id(cls):
-        idx = f"Food-{next(FoodID.id_iter)}"
-        return FoodID(idx)
 
 
 class Food(GameEntity):

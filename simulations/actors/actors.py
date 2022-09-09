@@ -6,35 +6,38 @@ import numpy as np
 from dataclasses import dataclass
 
 from simulations.environment import Position, ActorMoves
-from simulations.game_entity import BaseId, GameEntity
+from simulations.game_entity import BaseIDGenerator, GameEntity
 from simulations.actors.brain import Brain
+
+
+class ActorID(BaseIDGenerator):
+    """Generates unique IDs for actors"""
+    prefix = "Tito"
+    id_iter = itertools.count()
 
 
 @dataclass
 class Tito:
+    """Tito is the actor that will be used in the simulation"""
     reaction_speed: float
     life_expectancy: int
 
+
+class TitoGenerator:
+    """Generates Tito instances"""
+
     @classmethod
     def create_random(cls) -> 'Tito':
+        """Creates a random Tito instance"""
         reaction_speed = np.random.uniform(0, 1)
         life_expectancy = np.random.uniform(80, 120)
         return Tito(reaction_speed, life_expectancy)
 
 
-class ActorID(BaseId):
-    id_iter = itertools.count()
-
-    @classmethod
-    def generate_id(cls):
-        """Generate a new ID"""
-        idx = f"Tito-{next(ActorID.id_iter)}"
-        return ActorID(idx)
-
-
 class Actor(GameEntity):
+    """Actor class"""
 
-    def __init__(self, actor: Tito, idx: ActorID, family: str, brain: Brain):
+    def __init__(self, actor: Tito, idx: str, family: str, brain: Brain):
         self.actor = actor
         self.age = 0
         self.family = family
@@ -45,8 +48,9 @@ class Actor(GameEntity):
         return f"{self.idx} , {hex(id(self))}"
 
     def as_json(self) -> dict:
+        """Returns a JSON representation of the actor"""
         actor_json = deepcopy(self.actor.__dict__)
-        actor_json.update({"age": self.age, "family": self.family, "id": self.idx.idx})
+        actor_json.update({"age": self.age, "family": self.family, "id": self.idx})
         return actor_json
 
     def move(self, state_vector: np.array) -> str:

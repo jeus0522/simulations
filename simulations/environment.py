@@ -2,12 +2,7 @@ from random import randrange
 from typing import Tuple
 from enum import Enum
 
-from dataclasses import dataclass
 
-from simulations.utils import Constants
-
-
-@dataclass
 class ActorMoves(Enum):
     MOVE_UP = 0
     MOVE_RIGHT = 1
