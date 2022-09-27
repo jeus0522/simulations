@@ -166,6 +166,9 @@ function SimulationPage() {
             padding: "0 80px",
           }}
         >
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <h2>Tito v0.1</h2>
+          </div>
           <Play onClick={startSimulation} />
           <Pause onClick={stopSimulation} />
           <Step onClick={nextStep} />
