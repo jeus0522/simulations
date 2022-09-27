@@ -9,11 +9,13 @@ from simulations.actors.genes import Hexadecimal, generate_brain_genome, BrainGe
 
 @dataclass(frozen=True)
 class Brain:
+    """Represents a brain of an actor"""
     weights: np.array
     genome: List[BrainGen]
 
 
 class BrainGenerator:
+    """Generator for brain objects"""
 
     def __init__(self, sensors: Type[Enum], actions: Type[Enum], num_genes: int,
                  hex_bits: int = 2, weight_limits: int = 5):
@@ -51,6 +53,7 @@ class BrainGenerator:
         return sensor, action, final_weight
 
     def generate_brain(self) -> Brain:
+        """Generate a brain with a random genome"""
         weights = np.zeros((len(self.sensors), len(self.actions)))
         genome = generate_brain_genome(self.num_genes, self.hex_bits)
 

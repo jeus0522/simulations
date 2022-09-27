@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 
@@ -202,6 +202,14 @@ class SimulationEngine:
             entities.append(food_state)
 
         return entities
+
+    def export_board_json(self) -> np.array:
+        board = np.empty((self.env.width, self.env.height), dtype=object)
+        for position, actor in self.actors_manager.items():
+            board[position.x, position.y] = "actor"
+        for position, food in self.food.items():
+            board[position.x, position.y] = "food"
+        return board
 
 
 def main():
