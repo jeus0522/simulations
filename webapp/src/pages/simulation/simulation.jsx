@@ -140,8 +140,7 @@ function SimulationPage() {
           width: "100%",
           display: "flex",
           justifyContent: "center",
-          marginBottom: 40,
-          borderBottom: "1px solid #424242",
+          borderBottom: "solid 4px #d7ccc8",
         }}
       >
         <h1>Simulations</h1>
@@ -152,6 +151,7 @@ function SimulationPage() {
           display: "flex",
           justifyContent: "center",
           flexDirection: "row",
+          margin: "40px 0",
         }}
       >
         <div>
