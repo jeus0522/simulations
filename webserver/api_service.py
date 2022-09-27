@@ -32,7 +32,7 @@ def run_simulation():
     if not app.config["running_simulation"]:
         app.config["running_simulation"] = True
         while app.config["running_simulation"]:
-            socketio.sleep(0.01)
+            socketio.sleep(0.05)
             app.config["simulation_engine"].step()
             emit("simulation_state", get_simulation_state())
 

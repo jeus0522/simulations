@@ -25,3 +25,59 @@
   .kbd-navigation .square:focus {
     background: #ddd;
   }
+
+  .button-52 {
+    margin: 20px 0;
+    font-size: 16px;
+    font-weight: 200;
+    letter-spacing: 1px;
+    padding: 13px 20px 13px;
+    outline: 0;
+    border: 1px solid black;
+    cursor: pointer;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  .button-52:after {
+    content: "";
+    background-color: #ffe54c;
+    width: 100%;
+    z-index: -1;
+    position: absolute;
+    height: 100%;
+    top: 7px;
+    left: 7px;
+    transition: 0.2s;
+  }
+
+  .button-52:hover:after {
+    top: 0px;
+    left: 0px;
+  }
+
+  @media (min-width: 768px) {
+    .button-52 {
+      padding: 13px 50px 13px;
+    }
+  }
+
+  .board-container {
+    background: #e8f5e9;
+    padding: 20px;
+    border: 4px solid #66bb6a;
+    border-radius: 5px;
+  }
+
+  .square-container {
+    width: 40px;;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    background-color: #c8e6c9;
+    border: 2px solid #e8f5e9;
+    border-radius: 5px;
+  }
