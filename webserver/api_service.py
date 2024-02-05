@@ -1,10 +1,10 @@
 import argparse
-from typing import List, Optional
+from typing import Optional
 
 from flask import jsonify, Flask, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-from simulations import Environment, SimulationEngine
+from simulations import SimulationEngine
 
 # global
 app = Flask(__name__)
@@ -19,9 +19,9 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 @socketio.on("connect")
 def connected():
     """event listener when client connects to the server"""
-    print(request.sid)
-    print("client has connected")
-    emit("connect", {"data": f"id: {request.sid} is connected"})
+    sid = getattr(request, "sid", None)
+    print(f"client {sid} has connected")
+    emit("connect", {"data": f"id: {sid} is connected"})
 
 
 @socketio.on('run_simulation')
@@ -42,13 +42,6 @@ def stop_simulation():
     """event listener when client stops the simulation"""
     print("stopping simulation socket")
     app.config["running_simulation"] = False
-
-
-@socketio.on('data')
-def handle_message(data):
-    """event listener when client starts the simulation"""
-    print("data socket")
-    emit("data", {"data": data})
 
 
 @socketio.on("disconnect")

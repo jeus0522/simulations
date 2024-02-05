@@ -13,6 +13,9 @@ class Brain:
     weights: np.array
     genome: List[BrainGen]
 
+    def __repr__(self):
+        return f"{self.genome})"
+
 
 class BrainGenerator:
     """Generator for brain objects"""
