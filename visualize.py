@@ -77,7 +77,6 @@ class SimulationVisualization(object):
         self.background = pygame.Surface(window_size)
         self.background.fill(Colors.WHITE)
 
-        pygame.display.set_caption("Simulation")
         self.stopped = False
 
     def render(self, data: list[dict]):
@@ -87,12 +86,14 @@ class SimulationVisualization(object):
             if entity["type"] == "Actor":
                 color = pygame.Color(f"#{entity['first_gen']}")
                 actor = Entity(side=POSITION_SIDE, color=color)
-                actor.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE), window=self.window)
+                actor.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE),
+                             window=self.window)
                 continue
 
             if entity["type"] == "Food":
                 food = Entity(side=POSITION_SIDE, color=Colors.RED)
-                food.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE), window=self.window)
+                food.render(position=(entity["x"] * POSITION_SIDE, entity["y"] * POSITION_SIDE),
+                            window=self.window)
         pygame.display.update()
 
     def handle_actor_click(self, event: pygame.event.Event) -> Actor | None:

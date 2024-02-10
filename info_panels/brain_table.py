@@ -5,27 +5,38 @@ from simulations.actors.brain import Brain
 from simulations.environment import ActorSensors, ActorMoves
 
 
+TableRow = tuple[str, float, str]
+
+
 class BrainTable(ttk.Treeview):
     def __init__(self, master: tk.Tk):
         super().__init__(master)
         self.master = master
         self.pack()
 
-        self.sensors = tuple([sensor.name for sensor in ActorSensors])
-        self["columns"] = list(self.sensors)
-
-        self.column("#0", width=80, stretch=tk.NO)
-        for i, sensor in enumerate(self.sensors):
-            self.column(sensor, anchor=tk.CENTER, width=80)
-
-        self.heading("#0", text="Action")
-        for sensor in self.sensors:
-            self.heading(sensor, text=sensor, anchor=tk.CENTER)
+        headers = ("SENSOR", "VALUE", "ACTION")
+        self["columns"] = headers
+        self.column("#0", width=0, stretch=tk.NO)
+        for h in headers:
+            self.column(h, width=120, stretch=tk.NO, anchor=tk.CENTER)
+            self.heading(h, text=h, anchor=tk.CENTER)
 
     def update_table(self, brain: Brain):
         self.delete(*self.get_children())
-        weights = brain.weights.T
-        for i, row in enumerate(weights):
-            self.insert("", "end", text=ActorMoves(i).name, values=tuple(row))
+        rows = self._get_rows(brain)
+        for i, row in enumerate(rows):
+            self.insert("", "end", values=row)
         super().update()
         super().pack()
+
+    @staticmethod
+    def _get_rows(brain: Brain) -> list[TableRow]:
+        weights = brain.weights
+
+        rows = []
+        for sensor, action_values in zip(ActorSensors, weights):
+            for action, value in zip(ActorMoves, action_values):
+                if value != 0.0:
+                    rows.append((sensor.name, value, action.name))
+
+        return rows
